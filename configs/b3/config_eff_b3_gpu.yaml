@@ -1,0 +1,39 @@
+project_name: 'SatelliteClassifier'
+experiment_name: 'eff-b3_exp1'
+num_classes: 17
+n_epochs: 20
+accelerator: 'gpu'
+device: 0
+monitor_metric: 'val_f1'
+monitor_mode: 'max'
+threshold: 0.2
+metrics_average: 'macro'
+
+model_kwargs:
+  model_name: 'efficientnet_b3'
+  pretrained: true
+
+optimizer: 'torch.optim.AdamW'
+optimizer_kwargs:
+  lr: 1e-4
+  weight_decay: 1e-4
+
+scheduler: 'torch.optim.lr_scheduler.CosineAnnealingLR'
+scheduler_kwargs:
+  T_max: 15
+  eta_min: 1e-5
+
+losses:
+  - name: 'bce'
+    weight: 1.0
+    loss_fn: 'torch.nn.BCEWithLogitsLoss'
+    loss_kwargs: {}
+
+
+data_config:
+  data_path: './data'
+  batch_size: 128
+  n_workers: 8
+  train_size: 0.8
+  width: 224
+  height: 224

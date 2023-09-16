@@ -1,0 +1,14 @@
+.ipynb_checkpoints
+__pycache__
+venv/
+data/test-jpg/
+data/test-jpg-additional/
+data/Images/
+requirements_linter.txt
+clearml.conf
+src_prev/
+src_thrld/
+src_ini/
+MISC/
+lightning_logs/
+experiments/

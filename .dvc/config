@@ -1,0 +1,11 @@
+[core]
+    remote = dvcremote
+[cache]
+    type = "hardlink,symlink"
+['remote "myremote"']
+    url = ssh://git@gitlab.deepschool.ru:30022/cvr-aug23/j.polushina/hw-01-modeling.git/models/checkpoint
+    port = 30022
+['remote "dvcremote"']
+    url = ssh://91.206.15.25/home/j.polushina/dvc_files
+    user = j.polushina
+    keyfile = /Users/aleksandrkrylov/.ssh/id_rsa_stage

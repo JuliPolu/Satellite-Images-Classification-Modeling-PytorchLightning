@@ -1,5 +1,4 @@
 from typing import List
-
 from omegaconf import OmegaConf
 from pydantic import BaseModel
 
@@ -8,7 +7,7 @@ class LossConfig(BaseModel):
     name: str
     weight: float
     loss_fn: str
-    loss_kwargs: dict
+    pos_weight: List[float]
 
 
 class DataConfig(BaseModel):
@@ -26,7 +25,6 @@ class Config(BaseModel):
     data_config: DataConfig
     n_epochs: int
     num_classes: int
-    freeze_grad: bool
     threshold: float
     metrics_average: str
     accelerator: str

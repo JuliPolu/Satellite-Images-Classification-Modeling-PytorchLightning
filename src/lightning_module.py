@@ -7,26 +7,20 @@ from src.config import Config
 from src.losses import get_losses
 from src.metrics import get_metrics
 from src.utils import load_object
+from src.model_initialization import initialize_model
 
 
 class PlanetModule(pl.LightningModule):
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, label_names):
         super().__init__()
         self._config = config
 
         self._model = create_model(num_classes=self._config.num_classes, **self._config.model_kwargs)
-
-        if self._config.freeze_grad:
-            for param in self._model.parameters():
-                param.requires_grad = False
-
-            for param in list(self._model.parameters())[-10:]:
-                param.requires_grad = True
-
-            in_features = self._model.classifier.in_features
-            self._model.classifier = nn.Linear(in_features, self._config.num_classes)
+        
+        self._model.label_names = label_names
 
         self._losses = get_losses(self._config.losses)
+        
         metrics = get_metrics(
             num_classes=self._config.num_classes,
             num_labels=self._config.num_classes,
@@ -38,6 +32,7 @@ class PlanetModule(pl.LightningModule):
         self._test_metrics = metrics.clone(prefix='test_')
 
         self.save_hyperparameters()
+
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self._model(x)
@@ -85,6 +80,8 @@ class PlanetModule(pl.LightningModule):
         pr_labels = torch.sigmoid(pr_logits)
         self._test_metrics(pr_labels, gt_labels)
 
+    
+
     def on_validation_epoch_start(self) -> None:
         self._valid_metrics.reset()
 
@@ -107,3 +104,15 @@ class PlanetModule(pl.LightningModule):
             self.log(f'{prefix}{cur_loss.name}_loss', loss.item())
         self.log(f'{prefix}total_loss', total_loss.item())
         return total_loss
+
+
+    def to_torchscript(self):
+        class ScriptedPlanetModule(torch.nn.Module):
+            def __init__(self, model):
+                super().__init__()
+                self.model = model
+
+            def forward(self, x):
+                return self.model(x)
+        
+        return ScriptedPlanetModule(self._model)

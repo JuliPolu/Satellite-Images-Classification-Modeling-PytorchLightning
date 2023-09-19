@@ -15,3 +15,5 @@ clearml==1.11.1
 dvc
 matplotlib
 scikit-learn
+onnxruntime-gpu
+onnx

@@ -20,7 +20,7 @@ def arg_parse():
 
 def train(config: Config):
     datamodule = PlanetDM(config.data_config)
-    model = PlanetModule(config)
+    model = PlanetModule(config, datamodule.label_names)
 
     task = Task.init(
         project_name=config.project_name,
@@ -46,7 +46,7 @@ def train(config: Config):
         log_every_n_steps=40,
         callbacks=[
             checkpoint_callback,
-            EarlyStopping(monitor=config.monitor_metric, patience=4, mode=config.monitor_mode),
+            EarlyStopping(monitor=config.monitor_metric, patience=15, mode=config.monitor_mode),
             LearningRateMonitor(logging_interval='epoch'),
         ],
     )

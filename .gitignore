@@ -1,6 +1,7 @@
 .ipynb_checkpoints
 __pycache__
 venv/
+data/
 data/test-jpg/
 data/test-jpg-additional/
 data/Images/
@@ -12,3 +13,7 @@ src_ini/
 MISC/
 lightning_logs/
 experiments/
+*.ckpt
+*.pt
+*.pth
+configs/other/

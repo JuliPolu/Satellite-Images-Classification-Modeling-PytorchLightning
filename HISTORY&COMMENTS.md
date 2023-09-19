@@ -10,7 +10,6 @@
 удалось добиться скромного значения f1score 0.668 думаю вследствие сильного дисбаланса классов и использования уследнения macro чтобы все классы участвовали, если использовать weighted - то метрики подскакивают сразу почти до 0.9
 
 
-
 ### Не смогла разобраться
 
 не поняла как работает DVC, не включла его во премя тренировки моделей, поэтому пока просто добавила туда чекпойнт последней модели
@@ -58,3 +57,24 @@
 
 - Каким образом и нужно ли отдельно подбирать threshold для каждого класса, попробовала написать код для подбора порогового значения (сам код лежит [тут](src/lightning_module_with_thld.py) ) - но в итоге метрики особо не улучшились [ClearML](https://app.clear.ml/projects/422eb34b25884733baf0e5ea20ae9b93/experiments/e902d4174136444e98b7840399848623/output/execution)
 
+### После ревью
+
+- Удалила лишние файлы
+
+- добавила в dvc папку с удачным чекпойнтом и файл финальной модели
+
+- сделала отдельные скрипты для конвертации [тут](src/convert_checkpoint.py) и для инференса [тут](src/infer.py)  Так нормально или все же лучше в одном скрипте это делать?
+
+- Попробовала прогнать с обновленной функцией focal loss с взвешиванием по обратной частоте и квадратной обратной частоте и различными гаммами, но улучшить метрики так и не удалось. расчет обратныx частот в [тетрадке](notebooks/EDA.ipynb)
+  
+  [ClearML_eff-b0_focal_gamma_2.0_vanila]  (https://app.clear.ml/projects/422eb34b25884733baf0e5ea20ae9b93/experiments/995c04ec66284444a0ab6ba335c30ac0/output/execution)
+  [ClearML_eff-b0_focal_gamma_2_sqrtif] (https://app.clear.ml/projects/422eb34b25884733baf0e5ea20ae9b93/experiments/ea639b850a9e48c59ea7dde9c8a2b216/output/execution)
+  [ClearML_eff-b0_focal_gamma_0.5_vanila] (https://app.clear.ml/projects/422eb34b25884733baf0e5ea20ae9b93/experiments/c3291cc86f1449aa8cb6b8a1321ba69d/output/execution)
+  [ClearML_eff-b0_focal_gamma_0.5_weighted_sqrtif] (https://app.clear.ml/projects/422eb34b25884733baf0e5ea20ae9b93/experiments/5ecfe8621f964c6ba2e518cc5a7f0801/output/execution)
+  [ClearML_eff-b0_focal_gamma_0.5_weighted_if] (https://app.clear.ml/projects/422eb34b25884733baf0e5ea20ae9b93/experiments/cf6df2ac5aac49a995c0e4c623a685a5/output/execution)
+
+- также попробовала прогнать weighted BCEWithLogitsLoss но также целевую метрику это не улучшило
+  [ClearML_eff-b0_w_sqrtif_bce] (https://app.clear.ml/projects/422eb34b25884733baf0e5ea20ae9b93/experiments/74300e7b28304626801279c264e925e1/output/execution)
+  [ClearML_eff_b0_w_icf_bce] (https://app.clear.ml/projects/422eb34b25884733baf0e5ea20ae9b93/experiments/79493fdbc68643e0ac5643bb77f575c0/output/execution)
+  
+  

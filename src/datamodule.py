@@ -15,25 +15,23 @@ from src.dataset_splitter import stratify_shuffle_split_subsets
 class PlanetDM(LightningDataModule):
     def __init__(self, config: DataConfig):
         super().__init__()
-        self._batch_size = config.batch_size
-        self._n_workers = config.n_workers
-        self._train_size = config.train_size
-        self._data_path = config.data_path
+        self._config = config
         self._train_transforms = get_transforms(width=config.width, height=config.height)
         self._valid_transforms = get_transforms(width=config.width, height=config.height, augmentations=False)
         self._image_folder = os.path.join(config.data_path, 'Images')
 
+        self.label_names = []
         self.train_dataset: Optional[Dataset] = None
         self.valid_dataset: Optional[Dataset] = None
         self.test_dataset: Optional[Dataset] = None
 
     def prepare_data(self):
-        split_and_save_datasets(self._data_path, self._train_size)
+        self.label_names = split_and_save_datasets(self._config.data_path, self._config.train_size)
 
     def setup(self, stage: Optional[str] = None):
         if stage == 'fit':
-            df_train = read_df(self._data_path, 'train')
-            df_valid = read_df(self._data_path, 'valid')
+            df_train = read_df(self._config.data_path, 'train')
+            df_valid = read_df(self._config.data_path, 'valid')
             self.train_dataset = PlanetDataset(
                 df_train,
                 image_folder=self._image_folder,
@@ -46,7 +44,7 @@ class PlanetDM(LightningDataModule):
             )
 
         elif stage == 'test':
-            df_test = read_df(self._data_path, 'test')
+            df_test = read_df(self._config.data_path, 'test')
             self.test_dataset = PlanetDataset(
                 df_test,
                 image_folder=self._image_folder,
@@ -56,8 +54,8 @@ class PlanetDM(LightningDataModule):
     def train_dataloader(self) -> DataLoader:
         return DataLoader(
             dataset=self.train_dataset,
-            batch_size=self._batch_size,
-            num_workers=self._n_workers,
+            batch_size=self._config.batch_size,
+            num_workers=self._config.n_workers,
             shuffle=True,
             pin_memory=True,
             drop_last=False,
@@ -66,8 +64,8 @@ class PlanetDM(LightningDataModule):
     def val_dataloader(self) -> DataLoader:
         return DataLoader(
             dataset=self.valid_dataset,
-            batch_size=self._batch_size,
-            num_workers=self._n_workers,
+            batch_size=self._config.batch_size,
+            num_workers=self._config.n_workers,
             shuffle=False,
             pin_memory=True,
             drop_last=False,
@@ -76,8 +74,8 @@ class PlanetDM(LightningDataModule):
     def test_dataloader(self) -> DataLoader:
         return DataLoader(
             dataset=self.test_dataset,
-            batch_size=self._batch_size,
-            num_workers=self._n_workers,
+            batch_size=self._config.batch_size,
+            num_workers=self._config.n_workers,
             shuffle=False,
             pin_memory=True,
             drop_last=False,
@@ -87,6 +85,7 @@ class PlanetDM(LightningDataModule):
 def split_and_save_datasets(data_path: str, train_fraction: float = 0.8):
     df = pd.read_csv(os.path.join(data_path, 'train.csv'))
     logging.info(f'Original dataset: {len(df)}')
+    label_names = list(df.columns[2:])
     df = df.drop_duplicates()
     df = df.drop(['tags_list'], axis=1)
     logging.info(f'Final dataset: {len(df)}')
@@ -100,6 +99,7 @@ def split_and_save_datasets(data_path: str, train_fraction: float = 0.8):
     valid_df.to_csv(os.path.join(data_path, 'df_valid.csv'), index=False)
     test_df.to_csv(os.path.join(data_path, 'df_test.csv'), index=False)
     logging.info('Datasets successfully saved!')
+    return label_names
 
 
 def read_df(data_path: str, mode: str) -> pd.DataFrame:

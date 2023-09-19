@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import List
 
+import torch
 from torch import nn
 import torch.nn.functional as F
 
@@ -21,7 +22,7 @@ def get_losses(losses_cfg: List[LossConfig]) -> List[Loss]:
         Loss(
             name=loss_cfg.name,
             weight=loss_cfg.weight,
-            loss=load_object(loss_cfg.loss_fn)(**loss_cfg.loss_kwargs),
+            loss=load_object(loss_cfg.loss_fn)(),
         )
         for loss_cfg in losses_cfg
     ]

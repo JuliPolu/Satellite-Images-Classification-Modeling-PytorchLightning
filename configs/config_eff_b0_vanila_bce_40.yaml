@@ -1,0 +1,39 @@
+project_name: 'SatelliteClassifier'
+experiment_name: 'eff-b0_vanila_bce'
+num_classes: 17
+n_epochs:  40
+accelerator: 'gpu'
+device: 0
+monitor_metric: 'val_f1'
+monitor_mode: 'max'
+threshold: 0.2
+metrics_average: 'macro'
+
+model_kwargs:
+  model_name: 'efficientnet_b0'
+  pretrained: true
+
+optimizer: 'torch.optim.AdamW'
+optimizer_kwargs:
+  lr: 1e-3
+  weight_decay: 1e-5
+
+scheduler: 'torch.optim.lr_scheduler.CosineAnnealingLR'
+scheduler_kwargs:
+  T_max: 10
+  eta_min: 1e-5
+
+losses:
+  - name: 'bce'
+    weight: 1.0
+    loss_fn: 'torch.nn.BCEWithLogitsLoss'
+    pos_weight: [10.9274, 10.9113,  3.8741, 13.9169,  1.1932,  2.3611, 20.3237,  6.8527, 2.3371,  3.3256,  2.2395, 20.1194,  3.0069,  1.0388,  1.8130, 11.0420, 4.4020]
+
+
+data_config:
+  data_path: './data'
+  batch_size: 64
+  n_workers: 8
+  train_size: 0.8
+  width: 224
+  height: 224

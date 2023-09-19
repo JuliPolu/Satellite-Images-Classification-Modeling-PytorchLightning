@@ -7,6 +7,7 @@ import torch
 from src.lightning_module import PlanetModule
 import albumentations as albu
 from albumentations.pytorch import ToTensorV2
+import argparse 
 
 
 def preprocess_image(image: np.ndarray, target_image_size: tp.Tuple[int, int]) -> torch.Tensor:
@@ -30,23 +31,47 @@ def preprocess_image(image: np.ndarray, target_image_size: tp.Tuple[int, int]) -
 
     return image
 
-    # return torch.from_numpy(image)
+
+def arg_parse():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--model_path', type=str, required=True, help='Path to the checkpoint file')
+    parser.add_argument('--image_path', type=str, required=True, help='Path to the image file')
+    return parser.parse_args()
 
 
 DATA_FOLDER = './data/'
 
 if __name__ == '__main__':
-    checkpoint_name = './models/eff-b0_base_aug/epoch_epoch=11-val_f1=0.668.ckpt'
-    model = PlanetModule.load_from_checkpoint(checkpoint_name, map_location=torch.device('cpu'))
-    img = cv2.imread('data/test-jpg/test_0.jpg')
+
+    args = arg_parse()
+    image_path = args.image_path  # Set image_path from command-line argument
+    
+    img = cv2.imread(image_path)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img = preprocess_image(img, 224)
 
-    df = pd.read_csv(os.path.join(DATA_FOLDER, 'df_test.csv'))
-    names = list(df.columns[1:])
+    model_path = args.model_path
+    model = torch.jit.load(model_path, map_location='cpu')
+
+    label_names = ['artisinal_mine', 
+                    'selective_logging', 
+                    'haze',
+                    'slash_burn',
+                    'clear',
+                    'partly_cloudy',
+                    'blow_down',
+                    'bare_ground',
+                    'water',
+                    'habitation',
+                    'road',
+                    'conventional_mine',
+                    'cultivation',
+                    'primary',
+                    'agriculture',
+                    'blooming',
+                    'cloudy', ]
 
     with torch.no_grad():
-        # probs = model(img[None]).detach().cpu().numpy()[0]
         probs = torch.sigmoid(model(img[None]))[0].detach().cpu().numpy()
-    class_name2prob = {cls: prob for cls, prob in zip(names, probs)}
+    class_name2prob = {cls: prob for cls, prob in zip(label_names, probs)}
     print(class_name2prob)

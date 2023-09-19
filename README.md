@@ -26,15 +26,16 @@ PYTHONPATH=. python src/train.py configs/config_eff_b0_base.yaml
 
 Перформанс модели можно посмотреть тут:
 
-[ClearML efficientnet b0](https://app.clear.ml/projects/422eb34b25884733baf0e5ea20ae9b93/experiments/fd74fab66fb346b2972ea4142f205012/output/execution)
+[ClearML eff b0](https://app.clear.ml/projects/422eb34b25884733baf0e5ea20ae9b93/experiments/f892ff037efd4ff3999341aa0a267baf/output/execution)
 
 
 ### Актуальная версия чекпойнта модели:
 
 dvc pull models/checkpoint.dvc
 
+### Актуальная версия сохраненной torscript модели:
 
-Я пока к сожалению не разобралась с dvc staging :(, и к тому же запускала эксперименты на vast.ai. Добавила dvc для трекинга модел чекпойнт
+dvc pull models/jit_model/final_model.pt.dvc
 
 
 ### Инеренс
@@ -43,13 +44,20 @@ dvc pull models/checkpoint.dvc
 
 
 А также запустить скрипт для инференса
-
 ```
-.PYTHONPATH  ./src/infer.py
+PYTHONPATH=. python src/convert_checkpoint.py --checkpoint ./models/checkpoint/epoch_epoch=07-val_f1=0.651.ckpt
+```
+
+И запустить скрипт для инференса
+```
+PYTHONPATH=.  python ./src/infer.py --model_path ./models/jit_model/final_model.pt --image_path ./data/Images/train_26419.jpg
 ```
 
 ### Страдания модельера
 
 Также очень прошу можно ознакомиться со всей болью начинающей модельера, возникшими вопросами и комментариями
 
+
 [HISTORY&COMMENTS.md](HISTORY&COMMENTS.md)
+
+Добавила в файл также комментарии по изменениям после ревью

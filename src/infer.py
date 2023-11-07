@@ -2,7 +2,6 @@ import typing as tp
 import os
 import cv2
 import numpy as np
-import pandas as pd
 import torch
 from src.lightning_module import PlanetModule
 import albumentations as albu
@@ -53,25 +52,12 @@ if __name__ == '__main__':
     model_path = args.model_path
     model = torch.jit.load(model_path, map_location='cpu')
 
-    label_names = ['artisinal_mine', 
-                    'selective_logging', 
-                    'haze',
-                    'slash_burn',
-                    'clear',
-                    'partly_cloudy',
-                    'blow_down',
-                    'bare_ground',
-                    'water',
-                    'habitation',
-                    'road',
-                    'conventional_mine',
-                    'cultivation',
-                    'primary',
-                    'agriculture',
-                    'blooming',
-                    'cloudy', ]
 
     with torch.no_grad():
         probs = torch.sigmoid(model(img[None]))[0].detach().cpu().numpy()
-    class_name2prob = {cls: prob for cls, prob in zip(label_names, probs)}
+    class_name2prob = {cls: prob for cls, prob in zip(model.classes, probs)}
+
     print(class_name2prob)
+    print(model.classes)
+    print(model.size)
+    print(model.threshold)

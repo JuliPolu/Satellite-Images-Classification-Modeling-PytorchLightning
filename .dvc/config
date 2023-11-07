@@ -1,6 +1,7 @@
 [core]
     remote = dvcremote
 [cache]
+	
     type = "hardlink,symlink"
 ['remote "myremote"']
     url = ssh://git@gitlab.deepschool.ru:30022/cvr-aug23/j.polushina/hw-01-modeling.git/models/checkpoint

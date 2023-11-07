@@ -106,13 +106,3 @@ class PlanetModule(pl.LightningModule):
         return total_loss
 
 
-    def to_torchscript(self):
-        class ScriptedPlanetModule(torch.nn.Module):
-            def __init__(self, model):
-                super().__init__()
-                self.model = model
-
-            def forward(self, x):
-                return self.model(x)
-        
-        return ScriptedPlanetModule(self._model)

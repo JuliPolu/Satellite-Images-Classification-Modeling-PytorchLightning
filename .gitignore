@@ -5,6 +5,7 @@ data/
 data/test-jpg/
 data/test-jpg-additional/
 data/Images/
+data_hw_01/
 requirements_linter.txt
 clearml.conf
 src_prev/
@@ -17,3 +18,4 @@ experiments/
 *.pt
 *.pth
 configs/other/
+.vscode

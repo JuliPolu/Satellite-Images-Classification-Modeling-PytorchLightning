@@ -52,12 +52,3 @@ PYTHONPATH=. python src/convert_checkpoint.py --checkpoint ./models/checkpoint/e
 ```
 PYTHONPATH=.  python ./src/infer.py --model_path ./models/jit_model/final_model.pt --image_path ./data/Images/train_26419.jpg
 ```
-
-### Страдания модельера
-
-Также очень прошу можно ознакомиться со всей болью начинающей модельера, возникшими вопросами и комментариями
-
-
-[HISTORY&COMMENTS.md](HISTORY&COMMENTS.md)
-
-Добавила в файл также комментарии по изменениям после ревью

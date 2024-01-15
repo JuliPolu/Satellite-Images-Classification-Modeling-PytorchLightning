@@ -1,13 +1,33 @@
+# Jupyter Notebook
 .ipynb_checkpoints
-__pycache__
+
+# Environments
+.env
+.venv
+env/
 venv/
+ENV/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+__pycache__
+
+# VSCode
+*.code-workspace
+.vscode/
+
+.DS_Store
+
 data/
 data/test-jpg/
 data/test-jpg-additional/
 data/Images/
 data_hw_01/
+
 requirements_linter.txt
+
 clearml.conf
+
 src_prev/
 src_thrld/
 src_ini/
@@ -17,5 +37,7 @@ experiments/
 *.ckpt
 *.pt
 *.pth
+
 configs/other/
-.vscode
+
+HISTORY&COMMENTS.md
